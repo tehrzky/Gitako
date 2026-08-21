@@ -1,4 +1,4 @@
-# Gitako
+# Gitako 
 
 <p align="center">
   <img width="192" src="src/assets/icons/Gitako.png" />
