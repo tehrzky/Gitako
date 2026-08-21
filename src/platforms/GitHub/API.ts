@@ -168,6 +168,14 @@ export async function getCommitPageDocuments() {
   return continuousLoadFragmentedPages(window.location.href, document)
 }
 
+export async function getBranches(
+  userName: string,
+  repoName: string,
+  accessToken?: string,
+): Promise<{ name: string }[]> {
+  const url = `${API_ENDPOINT}/repos/${userName}/${repoName}/branches?per_page=100`
+  return await request(url, { accessToken })
+}
 export async function getBlobData(
   userName: string,
   repoName: string,
