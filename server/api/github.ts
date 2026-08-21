@@ -29,5 +29,9 @@ async function oauth(code: string) {
   return accessToken
 }
 
+async getBranches(user: string, repo: string) {
+  // Ask GitHub for the list of branches
+  return this.request(`repos/${user}/${repo}/branches?per_page=100`)
+}
 
 export default createCodeHandler(oauth)
