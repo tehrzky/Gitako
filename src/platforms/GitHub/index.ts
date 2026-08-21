@@ -138,12 +138,18 @@ export const GitHub: Platform = {
     }
     return metaData
   },
+  
   async getDefaultBranchName({ userName, repoName }, accessToken) {
+    async getBranches({ userName, repoName }, accessToken) {
+  return API.getBranches(userName, repoName, accessToken)
+},
     const dataFromJSON = DOMHelper.resolveMetaFromEmbeddedData()
     if (dataFromJSON?.defaultBranch) return dataFromJSON.defaultBranch
 
     return (await API.getRepoMeta(userName, repoName, accessToken)).default_branch
   },
+
+  
   resolveUrlFromMetaData({ userName, repoName, branchName }) {
     const repoUrl = `${window.location.origin}/${userName}/${repoName}`
     const userUrl = `${window.location.origin}/${userName}`
