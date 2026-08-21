@@ -2,7 +2,7 @@ name: Build Gitako
 
 on:
   push:
-    branches: [develop, master, main]
+    branches: [develop, master, main, tehrzky-patch-2]
   workflow_dispatch:
 
 jobs:
