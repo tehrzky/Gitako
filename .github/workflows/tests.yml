@@ -1,109 +1,21 @@
-name: Tests
+name: Build Gitako
 
 on:
   push:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
-  pull_request:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'server/**'
-  # Runs everyday to detect GitHub update in time
-  schedule:
-    - cron: '30 16 * * *'
+    branches: [develop, master, main]
+  workflow_dispatch:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yml
-
-  e2e-test:
-    needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Download a built dist artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: dist
-          path: dist
-
-      # Found no way to reuse cache steps
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache deps
-        uses: actions/cache@v3
-        id: yarn-cache
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Install Dependencies
-        run: |
-          yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
-
-      - name: Install Playwright Browsers
-        run: npx playwright install chromium
-
-      - name: E2E Test
-        env:
-          CI: 'true'
-        run: xvfb-run yarn test
-
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 30
-
-  unit-test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Download a built dist artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-
-      # Found no way to reuse cache steps
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache deps
-        uses: actions/cache@v3
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Install Dependencies
-        run: |
-          yarn --ignore-platform --ignore-engines --frozen-lockfile --prefer-offline
-
-      - name: Unit Test
-        run: |
-          yarn jest src
+          name: gitako-built
+          path: build/
