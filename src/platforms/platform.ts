@@ -10,6 +10,10 @@ export type Platform = {
     metaData: Pick<MetaData, 'userName' | 'repoName'>,
     accessToken?: string,
   ): Promise<string>
+  getBranches(
+  metaData: Pick<MetaData, 'userName' | 'repoName'>,
+  accessToken?: string,
+): Promise<{ name: string }[]>
   resolveUrlFromMetaData(metaData: MetaData): {
     userUrl: string
     repoUrl: string
