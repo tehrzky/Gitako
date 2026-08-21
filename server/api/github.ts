@@ -30,16 +30,4 @@ async function oauth(code: string) {
 }
 
 
-// src/platforms/GitHub.ts
-async listBranches(meta: MetaData): Promise<Branch[]> {
-  const { user, repo } = meta
-  const response = await this.request(
-    `repos/${user}/${repo}/branches?per_page=100`
-  )
-  return response.map((b: any) => ({
-    name: b.name,
-    protected: b.protected,
-  }))
-}
-
 export default createCodeHandler(oauth)
